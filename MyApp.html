@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wealth Builder Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .dark .tab-content.active {
+            animation: fadeInDark 0.5s ease-out;
+        }
+        @keyframes fadeInDark {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animated-number {
+            transition: all 0.5s ease-in-out;
+        }
+        /* Custom scrollbar for better styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #374151;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #555;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header -->
+        <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div class="mb-4 sm:mb-0">
+                <h1 class="text-4xl font-bold text-gray-900 dark:text-white tracking-tight">Personal Finance Portfolio</h1>
+                <p class="text-lg text-gray-600 dark:text-gray-400 mt-2">Track expenses, investments, and build wealth.</p>
+            </div>
+            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200/50 dark:bg-gray-700/50 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+                <svg id="sun-icon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <svg id="moon-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="mb-8 flex flex-wrap space-x-2 sm:space-x-4">
+            <button id="tab-expenses" class="tab-button flex items-center px-4 py-2 rounded-full font-semibold transition-all duration-300 bg-indigo-600 text-white shadow-lg">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                Expenses
+            </button>
+            <button id="tab-investments" class="tab-button flex items-center px-4 py-2 rounded-full font-semibold transition-all duration-300 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                Investments
+            </button>
+            <button id="tab-analytics" class="tab-button flex items-center px-4 py-2 rounded-full font-semibold transition-all duration-300 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /></svg>
+                Analytics
+            </button>
+            <button id="tab-wealth" class="tab-button flex items-center px-4 py-2 rounded-full font-semibold transition-all duration-300 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                Wealth Builder
+            </button>
+        </nav>
+
+        <!-- Tab Content -->
+        <div id="expenses-content" class="tab-content active">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4 p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Your Financial Picture</h3>
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label for="monthlySalary" class="text-sm font-medium text-gray-700 dark:text-gray-300">Monthly Salary</label>
+                            <input type="number" id="monthlySalary" placeholder="Enter Monthly Salary (₹)" class="w-full p-3 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm" />
+                        </div>
+                        <div class="space-y-2">
+                            <label for="monthlyBudget" class="text-sm font-medium text-gray-700 dark:text-gray-300">Monthly Budget</label>
+                            <input type="number" id="monthlyBudget" placeholder="Enter Monthly Budget (₹)" class="w-full p-3 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4" id="expense-stats">
+                        <!-- Expense Stats will be rendered here by JS -->
+                    </div>
+                </div>
+                <div class="space-y-4 p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Add New Expense</h3>
+                    <input type="text" id="expense-description" placeholder="Description" class="w-full p-3 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm" />
+                    <input type="number" id="expense-amount" placeholder="Amount (₹)" class="w-full p-3 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm" />
+                    <select id="expense-category" class="w-full p-3 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm">
+                        <option>Food</option>
+                        <option>Rent</option>
+                        <option>Transport</option>
+                        <option>Entertainment</option>
+                        <option>Other</option>
+                    </select>
+                    <button id="add-expense-btn" class="w-full p-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors">Add Expense</button>
+                    
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                        <h4 class="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Add Recurring Transaction</h4>
+                        <input type="text" id="recurring-description" placeholder="Description" class="w-full p-3 mb-2 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm" />
+                        <input type="number" id="recurring-amount" placeholder="Monthly Amount (₹)" class="w-full p-3 mb-2 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm" />
+                        <select id="recurring-category" class="w-full p-3 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm">
+                            <option>Food</option>
+                            <option>Rent</option>
+                            <option>Transport</option>
+                            <option>Entertainment</option>
+                            <option>Other</option>
+                        </select>
+                        <button id="add-recurring-btn" class="w-full p-3 mt-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors">Add Recurring</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6">
+                <div class="p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-lg h-96 overflow-y-auto">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Your Expenses</h3>
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300 sticky top-0 rounded-t-lg">
+                            <tr>
+                                <th class="px-6 py-3">Description</th>
+                                <th class="px-6 py-3">Category</th>
+                                <th class="px-6 py-3">Amount</th>
+                                <th class="px-6 py-3">Date</th>
+                                <th class="px-6 py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenses-table-body">
+                            <!-- Expenses will be rendered here by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="investments-content" class="tab-content">
+            <div class="col-span-3 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-1">
+                        <div class="space-y-4 p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-lg">
+                            <h3 id="investment-form-title" class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Add New Investment</h3>
+                            <div class="flex rounded-lg border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-800/60 shadow-sm">
+                                <button id="lumpsum-btn" class="flex-1 p-3 text-sm font-semibold rounded-l-lg transition-colors bg-indigo-600 text-white">Lump Sum</button>
+                                <button id="sip-btn" class="flex-1 p-3 text-sm font-semibold rounded-r-lg transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">SIP</button>
+                            </div>
+                            <input type="hidden" id="investment-id" />
+                            <input type="text" id="investment-name" placeholder="Investment Name" class="w-full p-3 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm" />
+                            <input type="number" id="investment-amount" placeholder="Amount (₹)" class="w-full p-3 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm" />
+                            <select id="investment-type-select" class="w-full p-3 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm">
+                                <option>Stock</option>
+                                <option>Mutual Fund</option>
+                                <option>Fixed Deposit</option>
+                                <option>Other</option>
+                            </select>
+                            <div class="flex space-x-2">
+                                <button id="add-investment-btn" class="flex-1 p-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors">Add</button>
+                                <button id="cancel-edit-btn" class="p-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors hidden">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="investment-stats" class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Investment stats will be rendered here by JS -->
+                    </div>
+                </div>
+                <div class="mt-6 p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-lg h-96 overflow-y-auto">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Your Investments</h3>
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300 sticky top-0 rounded-t-lg">
+                            <tr>
+                                <th class="px-6 py-3">Name</th>
+                                <th class="px-6 py-3">Type</th>
+                                <th class="px-6 py-3">Amount</th>
+                                <th class="px-6 py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="investments-table-body">
+                            <!-- Investments will be rendered here by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="analytics-content" class="tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-lg h-96 overflow-y-auto">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Spending by Category</h3>
+                    <div id="category-analytics">
+                        <!-- Category analytics will be rendered here -->
+                    </div>
+                </div>
+                <div class="lg:col-span-1 p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-lg h-96 overflow-y-auto">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Monthly Spending</h3>
+                    <div id="monthly-analytics">
+                        <!-- Monthly analytics will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="wealth-content" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <aside class="lg:col-span-1 space-y-6 p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Financial Plan</h2>
+                    <div id="wealth-inputs" class="space-y-6">
+                        <!-- Wealth builder inputs will be rendered here by JS -->
+                    </div>
+                </aside>
+                <main class="lg:col-span-2 space-y-8">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="wealth-stats">
+                        <!-- Wealth stats will be rendered here by JS -->
+                    </div>
+                    <div class="text-center p-4 rounded-lg bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800 hidden" id="goal-message">
+                        <!-- Goal message will be rendered here by JS -->
+                    </div>
+                    <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Wealth Growth Projection</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Due to the removal of external dependencies, the chart has been replaced with a detailed table and a text summary of your growth. </p>
+                    </div>
+                    <div id="wealth-table">
+                        <!-- Wealth projection table will be rendered here by JS -->
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for confirmation -->
+    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm mx-auto">
+            <p id="modal-message" class="text-lg font-semibold mb-4 text-gray-900 dark:text-white"></p>
+            <div class="flex justify-end space-x-4">
+                <button id="modal-cancel-btn" class="px-4 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors">Cancel</button>
+                <button id="modal-confirm-btn" class="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition-colors">Delete</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Budget warning banner -->
+    <div id="budget-warning" class="fixed inset-0 z-50 flex items-start justify-center pt-8 pointer-events-none hidden">
+        <div class="bg-red-500 text-white p-4 rounded-lg shadow-xl max-w-sm mx-auto animate-bounce-in-down pointer-events-auto">
+            <p class="font-semibold text-center flex items-center justify-center">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Warning! You have spent over 30% of your budget.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- State Management ---
+            let data = {
+                expenses: [],
+                investments: [],
+                recurringExpenses: [],
+                settings: {
+                    monthlySalary: 0,
+                    monthlyBudget: 0,
+                },
+                wealth: {
+                    currentInvestments: 0,
+                    monthlyInvestment: 20000,
+                    contributionIncreaseRate: 8,
+                    years: 25,
+                    interestRate: 12,
+                    inflationRate: 6,
+                    financialGoal: 20000000,
+                }
+            };
+
+            const saveData = () => {
+                try {
+                    localStorage.setItem('wealthBuilderData', JSON.stringify(data));
+                } catch (e) {
+                    console.error("Could not save data to localStorage:", e);
+                }
+            };
+
+            const loadData = () => {
+                try {
+                    const savedData = localStorage.getItem('wealthBuilderData');
+                    if (savedData) {
+                        const parsedData = JSON.parse(savedData);
+                        // Merge parsed data with default structure to prevent issues with new fields
+                        Object.assign(data, {
+                            expenses: [],
+                            investments: [],
+                            recurringExpenses: [],
+                            settings: { monthlySalary: 0, monthlyBudget: 0 },
+                            wealth: {
+                                currentInvestments: 0, monthlyInvestment: 20000,
+                                contributionIncreaseRate: 8, years: 25,
+                                interestRate: 12, inflationRate: 6,
+                                financialGoal: 20000000,
+                            }
+                        });
+                        Object.assign(data, parsedData);
+                    }
+                } catch (e) {
+                    console.error("Could not load data from localStorage:", e);
+                }
+            };
+
+            // --- UI Elements ---
+            const themeToggle = document.getElementById('theme-toggle');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            const tabs = document.querySelectorAll('.tab-button');
+            const contents = document.querySelectorAll('.tab-content');
+
+            const expensesTableBody = document.getElementById('expenses-table-body');
+            const investmentsTableBody = document.getElementById('investments-table-body');
+            const monthlySalaryInput = document.getElementById('monthlySalary');
+            const monthlyBudgetInput = document.getElementById('monthlyBudget');
+            const expenseStatsDiv = document.getElementById('expense-stats');
+            const investmentStatsDiv = document.getElementById('investment-stats');
+            const wealthInputsDiv = document.getElementById('wealth-inputs');
+            const wealthStatsDiv = document.getElementById('wealth-stats');
+            const wealthTableDiv = document.getElementById('wealth-table');
+            const categoryAnalyticsDiv = document.getElementById('category-analytics');
+            const monthlyAnalyticsDiv = document.getElementById('monthly-analytics');
+
+
+            // --- Modal Elements ---
+            const modal = document.getElementById('modal');
+            const modalMessage = document.getElementById('modal-message');
+            const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+            const modalCancelBtn = document.getElementById('modal-cancel-btn');
+            const budgetWarningBanner = document.getElementById('budget-warning');
+            
+            let itemToDelete = null;
+
+            // --- Helper Functions ---
+            const formatCurrency = (value) => {
+                const val = value || 0;
+                if (val >= 10000000) return `₹${(val / 10000000).toFixed(2)} Cr`;
+                if (val >= 100000) return `₹${(val / 100000).toFixed(1)} L`;
+                return `₹${Math.round(val)}`;
+            };
+
+            const createStatCard = (title, value, iconHtml) => {
+                const div = document.createElement('div');
+                div.className = "bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-xl p-4 shadow-md transition-all duration-300";
+                div.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">${title}</h3>
+                        <div class="text-indigo-500 dark:text-indigo-400">${iconHtml}</div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white tracking-tight">${formatCurrency(value)}</span>
+                    </div>
+                `;
+                return div;
+            };
+
+            const createInputField = (id, label, value, unit, tooltipText, iconHtml) => {
+                const div = document.createElement('div');
+                div.className = "space-y-2";
+                div.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <label for="${id}" class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            ${iconHtml} <span class="ml-2">${label}</span>
+                        </label>
+                        <div class="relative group flex items-center">
+                            <svg class="h-4 w-4 text-gray-400 dark:text-gray-500 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max max-w-xs text-center bg-gray-800 text-white text-xs rounded-lg py-2 px-3 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300 pointer-events-none z-10 shadow-lg">${tooltipText}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 w-full">
+                        <button type="button" class="decrement-btn p-2 bg-gray-200 dark:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 transition-colors" data-field="${id}">-</button>
+                        <div class="relative flex-grow">
+                            <input type="number" id="${id}" value="${value}" class="w-full pl-3 pr-10 py-2 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" />
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 dark:text-gray-400 text-xs">${unit}</span>
+                        </div>
+                        <button type="button" class="increment-btn p-2 bg-gray-200 dark:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 transition-colors" data-field="${id}">+</button>
+                    </div>
+                `;
+                return div;
+            };
+
+            const showModal = (message, onConfirm) => {
+                modalMessage.textContent = message;
+                modal.classList.remove('hidden');
+                modalConfirmBtn.onclick = () => {
+                    onConfirm();
+                    modal.classList.add('hidden');
+                };
+                modalCancelBtn.onclick = () => {
+                    modal.classList.add('hidden');
+                    itemToDelete = null;
+                };
+            };
+
+            const toggleBudgetWarning = (show) => {
+                if (show) {
+                    budgetWarningBanner.classList.remove('hidden');
+                } else {
+                    budgetWarningBanner.classList.add('hidden');
+                }
+            };
+            
+            const processRecurringTransactions = () => {
+                const today = new Date();
+                const currentMonth = today.getMonth();
+                const currentYear = today.getFullYear();
+            
+                data.recurringExpenses.forEach(recExp => {
+                    const lastAddedDate = recExp.lastAddedDate ? new Date(recExp.lastAddedDate) : null;
+                    const lastAddedMonth = lastAddedDate?.getMonth();
+                    const lastAddedYear = lastAddedDate?.getFullYear();
+                    
+                    if (!lastAddedDate || lastAddedMonth !== currentMonth || lastAddedYear !== currentYear) {
+                        data.expenses.push({
+                            id: Date.now().toString() + '-' + Math.random().toString(16).slice(2),
+                            description: recExp.description,
+                            amount: recExp.amount,
+                            category: recExp.category,
+                            date: today.toISOString(),
+                            isRecurring: true
+                        });
+                        recExp.lastAddedDate = today.toISOString();
+                    }
+                });
+                saveData();
+            };
+
+            // --- Logic ---
+            const updateExpenseTab = () => {
+                const totalExpenses = data.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+                const remainingBalance = data.settings.monthlySalary - totalExpenses;
+                
+                expenseStatsDiv.innerHTML = '';
+                expenseStatsDiv.appendChild(createStatCard("Total Expenses", totalExpenses, `<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8l3-3m0 0l3 3m-3-3v10m-3 2h6a2 2 0 002-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 002 2z" /></svg>`));
+                expenseStatsDiv.appendChild(createStatCard("Remaining Balance", remainingBalance, `<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 6v1m0 12a9 9 0 110-18 9 9 0 010 18z" /></svg>`));
+
+                // Re-render expenses table
+                expensesTableBody.innerHTML = '';
+                data.expenses.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(exp => {
+                    const row = document.createElement('tr');
+                    row.className = "bg-white/50 dark:bg-gray-800/50 border-b dark:border-gray-700 hover:bg-gray-100/50 dark:hover:bg-gray-700/50 transition-colors";
+                    row.innerHTML = `
+                        <td class="px-6 py-4">${exp.description} ${exp.isRecurring ? '<span class="text-xs font-semibold text-purple-600 dark:text-purple-400"> (Recurring)</span>' : ''}</td>
+                        <td class="px-6 py-4">${exp.category}</td>
+                        <td class="px-6 py-4">${formatCurrency(exp.amount)}</td>
+                        <td class="px-6 py-4">${new Date(exp.date).toLocaleDateString()}</td>
+                        <td class="px-6 py-4">
+                            <button class="delete-expense-btn text-red-500 hover:text-red-700 transition-colors" data-id="${exp.id}">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.013 21H7.987a2 2 0 01-1.92-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                        </td>
+                    `;
+                    expensesTableBody.appendChild(row);
+                });
+
+                // Attach delete event listeners
+                document.querySelectorAll('.delete-expense-btn').forEach(button => {
+                    button.onclick = (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        showModal("Are you sure you want to delete this expense?", () => {
+                            data.expenses = data.expenses.filter(exp => exp.id !== id);
+                            saveData();
+                            updateExpenseTab();
+                        });
+                    };
+                });
+                
+                // Check for budget warning
+                if (data.settings.monthlyBudget > 0 && totalExpenses > data.settings.monthlyBudget * 0.3) {
+                    toggleBudgetWarning(true);
+                } else {
+                    toggleBudgetWarning(false);
+                }
+            };
+
+            const updateInvestmentTab = () => {
+                const totalLumpSum = data.investments.filter(inv => inv.type === 'Lump Sum').reduce((sum, inv) => sum + inv.amount, 0);
+                const totalSIP = data.investments.filter(inv => inv.type === 'SIP').reduce((sum, inv) => sum + inv.amount, 0);
+                
+                investmentStatsDiv.innerHTML = '';
+                investmentStatsDiv.appendChild(createStatCard("Total Lump Sum", totalLumpSum, `<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2M7 9h14a2 2 0 012 2v8a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2zm9 6a2 2 0 11-4 0 2 2 0 014 0z" /></svg>`));
+                investmentStatsDiv.appendChild(createStatCard("Total Monthly SIP", totalSIP, `<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>`));
+
+                // Update wealth builder's current investments with lump sum total
+                data.wealth.currentInvestments = totalLumpSum;
+
+                // Re-render investments table
+                investmentsTableBody.innerHTML = '';
+                data.investments.forEach(inv => {
+                    const row = document.createElement('tr');
+                    row.className = "bg-white/50 dark:bg-gray-800/50 border-b dark:border-gray-700 hover:bg-gray-100/50 dark:hover:bg-gray-700/50 transition-colors";
+                    row.innerHTML = `
+                        <td class="px-6 py-4">${inv.name}</td>
+                        <td class="px-6 py-4">${inv.type}</td>
+                        <td class="px-6 py-4">${formatCurrency(inv.amount)} ${inv.type === 'SIP' ? '<span class="text-xs text-gray-500 dark:text-gray-400 ml-1">(Monthly)</span>' : ''}</td>
+                        <td class="px-6 py-4 flex space-x-2">
+                            <button class="edit-investment-btn text-blue-500 hover:text-blue-700 transition-colors" data-id="${inv.id}">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                            </button>
+                            <button class="delete-investment-btn text-red-500 hover:text-red-700 transition-colors" data-id="${inv.id}">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.013 21H7.987a2 2 0 01-1.92-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                        </td>
+                    `;
+                    investmentsTableBody.appendChild(row);
+                });
+
+                // Attach event listeners for investments
+                document.querySelectorAll('.edit-investment-btn').forEach(button => {
+                    button.onclick = (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        const investment = data.investments.find(inv => inv.id === id);
+                        if (investment) {
+                            document.getElementById('investment-form-title').textContent = 'Edit Investment';
+                            document.getElementById('investment-id').value = investment.id;
+                            document.getElementById('investment-name').value = investment.name;
+                            document.getElementById('investment-amount').value = investment.amount;
+                            document.getElementById('investment-type-select').value = investment.type;
+                            document.getElementById('add-investment-btn').textContent = 'Update';
+                            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+                        }
+                    };
+                });
+                document.querySelectorAll('.delete-investment-btn').forEach(button => {
+                    button.onclick = (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        showModal("Are you sure you want to delete this investment?", () => {
+                            data.investments = data.investments.filter(inv => inv.id !== id);
+                            saveData();
+                            updateInvestmentTab();
+                        });
+                    };
+                });
+            };
+
+            const updateAnalyticsTab = () => {
+                const spendingByCategory = data.expenses.reduce((acc, expense) => {
+                    acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+                    return acc;
+                }, {});
+
+                categoryAnalyticsDiv.innerHTML = `
+                    <div class="h-80 overflow-y-auto">
+                        ${Object.keys(spendingByCategory).length > 0 ? `
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300 sticky top-0">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Category</th>
+                                    <th scope="col" class="px-6 py-3">Total Spent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Object.keys(spendingByCategory).map(category => `
+                                    <tr class="bg-white/50 dark:bg-gray-800/50 border-b dark:border-gray-700">
+                                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">${category}</td>
+                                        <td class="px-6 py-4">${formatCurrency(spendingByCategory[category])}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        ` : `<p class="text-center py-8">No expense data to analyze yet.</p>`}
+                    </div>
+                `;
+
+                const monthlySpending = data.expenses.reduce((acc, expense) => {
+                    const date = new Date(expense.date);
+                    const month = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+                    acc[month] = (acc[month] || 0) + expense.amount;
+                    return acc;
+                }, {});
+
+                monthlyAnalyticsDiv.innerHTML = `
+                    <div class="h-80 overflow-y-auto">
+                        ${Object.keys(monthlySpending).length > 0 ? `
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300 sticky top-0">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Month</th>
+                                    <th scope="col" class="px-6 py-3">Total Spent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Object.keys(monthlySpending).map(month => `
+                                    <tr class="bg-white/50 dark:bg-gray-800/50 border-b dark:border-gray-700">
+                                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">${month}</td>
+                                        <td class="px-6 py-4">${formatCurrency(monthlySpending[month])}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        ` : `<p class="text-center py-8">No expense data to analyze yet.</p>`}
+                    </div>
+                `;
+            };
+
+            const updateWealthTab = () => {
+                const { currentInvestments, monthlyInvestment, contributionIncreaseRate, years, interestRate, inflationRate, financialGoal } = data.wealth;
+                
+                wealthStatsDiv.innerHTML = '';
+                wealthInputsDiv.innerHTML = '';
+
+                // Render Input Fields
+                const inputs = [
+                    { id: 'currentInvestments', label: 'Current Investments', value: currentInvestments, unit: '₹', tooltip: "The total value of your current investments.", icon: `<svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8l3-3m0 0l3 3m-3-3v10m-3 2h6a2 2 0 002-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 002 2z" /></svg>` },
+                    { id: 'monthlyInvestment', label: 'Monthly Investment', value: monthlyInvestment, unit: '₹', tooltip: "The fixed amount you plan to invest every month.", icon: `<svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>` },
+                    { id: 'contributionIncreaseRate', label: 'Annual Contribution Hike', value: contributionIncreaseRate, unit: '%', tooltip: "The percentage by which you plan to increase your monthly contribution each year.", icon: `<svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>` },
+                    { id: 'years', label: 'Investment Period', value: years, unit: 'yrs', tooltip: "The total number of years you plan to stay invested.", icon: `<svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h.01M7 15h.01M4 12V6a2 2 0 012-2h12a2 2 0 012 2v6m-6 0v4a2 2 0 01-2 2H9a2 2 0 01-2-2v-4" /></svg>` },
+                    { id: 'interestRate', label: 'Annual Return Rate', value: interestRate, unit: '%', tooltip: "Your estimated annual return on investment. Average stock market returns are 10-12%.", icon: `<svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M18 6h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>` },
+                    { id: 'inflationRate', label: 'Estimated Inflation', value: inflationRate, unit: '%', tooltip: "The average annual inflation rate. This helps calculate the 'real' value of your money in the future.", icon: `<svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 6v1m0 12a9 9 0 110-18 9 9 0 010 18z" /></svg>` },
+                ];
+                inputs.forEach(input => wealthInputsDiv.appendChild(createInputField(input.id, input.label, input.value, input.unit, input.tooltip, input.icon)));
+                
+                const financialGoalDiv = document.createElement('div');
+                financialGoalDiv.className = "space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700";
+                financialGoalDiv.innerHTML = `
+                    <label for="financialGoal" class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m13 0l3-1M5 13h14M11 4v16a1 1 0 001 1h2a1 1 0 001-1V4M4 18h16" /></svg> <span class="ml-2">Financial Goal</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">₹</span>
+                        <input type="text" id="financialGoal" value="${new Intl.NumberFormat('en-IN').format(financialGoal)}" class="w-full pl-7 py-2 bg-white/60 dark:bg-gray-800/60 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" />
+                    </div>
+                `;
+                wealthInputsDiv.appendChild(financialGoalDiv);
+                
+                // Add event listeners for wealth inputs
+                wealthInputsDiv.querySelectorAll('input[type="number"], input[type="text"]').forEach(input => {
+                    input.oninput = (e) => {
+                        const value = parseFloat(e.target.value) || 0;
+                        data.wealth[e.target.id] = value;
+                        saveData();
+                        calculateWealthProjection();
+                    };
+                });
+                document.getElementById('financialGoal').oninput = (e) => {
+                    const value = e.target.value.replace(/[^0-9.]/g, '');
+                    const numValue = Number(value);
+                    data.wealth.financialGoal = isNaN(numValue) ? 0 : numValue;
+                    e.target.value = new Intl.NumberFormat('en-IN').format(data.wealth.financialGoal);
+                    saveData();
+                    calculateWealthProjection();
+                };
+
+                wealthInputsDiv.querySelectorAll('.increment-btn, .decrement-btn').forEach(btn => {
+                    btn.onclick = (e) => {
+                        const fieldId = e.currentTarget.dataset.field;
+                        const input = document.getElementById(fieldId);
+                        const step = fieldId === 'interestRate' || fieldId === 'inflationRate' ? 0.5 : 1;
+                        let currentValue = parseFloat(input.value) || 0;
+                        if (e.currentTarget.classList.contains('increment-btn')) {
+                            currentValue += step;
+                        } else {
+                            currentValue -= step;
+                        }
+                        input.value = currentValue;
+                        data.wealth[fieldId] = currentValue;
+                        saveData();
+                        calculateWealthProjection();
+                    };
+                });
+
+                calculateWealthProjection();
+            };
+
+            const calculateWealthProjection = () => {
+                const { currentInvestments, monthlyInvestment, contributionIncreaseRate, years, interestRate, inflationRate, financialGoal } = data.wealth;
+                
+                let projectionData = [];
+                let futureValue = parseFloat(currentInvestments) || 0;
+                let totalContributions = parseFloat(currentInvestments) || 0;
+                let currentMonthlyContribution = parseFloat(monthlyInvestment) || 0;
+                
+                projectionData.push({
+                    year: 0,
+                    total: Math.round(futureValue),
+                    contributions: Math.round(totalContributions),
+                    realValue: Math.round(futureValue),
+                    yearlyContributions: Math.round(currentInvestments) || 0,
+                    yearlyInterest: 0,
+                });
+
+                let monthlyRate = interestRate / 100 / 12;
+                if (isNaN(monthlyRate) || monthlyRate < 0) monthlyRate = 0;
+
+                let inflRate = inflationRate / 100;
+                if (isNaN(inflRate) || inflRate < 0) inflRate = 0;
+
+                let contribHike = contributionIncreaseRate / 100;
+                if (isNaN(contribHike) || contribHike < 0) contribHike = 0;
+
+                const annualGrowth = Math.pow(1 + monthlyRate, 12);
+                let goalReachedYear = null;
+
+                for (let year = 1; year <= years; year++) {
+                    const prevFuture = futureValue;
+                    futureValue *= annualGrowth;
+                    
+                    let yearlyContributions = currentMonthlyContribution * 12;
+                    let annuityFV = 0;
+                    if (monthlyRate > 0) {
+                        annuityFV = currentMonthlyContribution * (1 + monthlyRate) * (Math.pow(1 + monthlyRate, 12) - 1) / monthlyRate;
+                    } else {
+                        annuityFV = yearlyContributions;
+                    }
+                    futureValue += annuityFV;
+                    totalContributions += yearlyContributions;
+                    
+                    const yearlyInterest = futureValue - prevFuture - yearlyContributions;
+                    const realValue = futureValue / Math.pow(1 + inflRate, year);
+
+                    projectionData.push({
+                        year: year,
+                        total: Math.round(futureValue),
+                        contributions: Math.round(totalContributions),
+                        realValue: Math.round(realValue),
+                        yearlyContributions: Math.round(yearlyContributions),
+                        yearlyInterest: Math.round(yearlyInterest),
+                    });
+                    currentMonthlyContribution *= (1 + contribHike);
+
+                    if (goalReachedYear === null && futureValue >= financialGoal) {
+                        goalReachedYear = year;
+                    }
+                }
+                
+                const finalResult = projectionData[projectionData.length - 1] || {};
+                const totalInterest = finalResult.total - finalResult.contributions;
+
+                wealthStatsDiv.innerHTML = '';
+                wealthStatsDiv.appendChild(createStatCard("Future Value", finalResult.total, `<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8l3-3m0 0l3 3m-3-3v10m-3 2h6a2 2 0 002-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 002 2z" /></svg>`));
+                wealthStatsDiv.appendChild(createStatCard("Real Value", finalResult.realValue, `<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8l3-3m0 0l3 3m-3-3v10m-3 2h6a2 2 0 002-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 002 2z" /></svg>`));
+                wealthStatsDiv.appendChild(createStatCard("Contributions", finalResult.contributions, `<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>`));
+                wealthStatsDiv.appendChild(createStatCard("Interest Earned", totalInterest, `<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 6v1m0 12a9 9 0 110-18 9 9 0 010 18z" /></svg>`));
+
+                const goalMessageDiv = document.getElementById('goal-message');
+                if (goalReachedYear !== null) {
+                    goalMessageDiv.classList.remove('hidden');
+                    goalMessageDiv.innerHTML = `<p>Congratulations! You are projected to reach your goal of <strong>${formatCurrency(financialGoal)}</strong> in <strong>Year ${goalReachedYear}</strong>.</p>`;
+                } else {
+                    goalMessageDiv.classList.add('hidden');
+                }
+                
+                // Render projection table
+                wealthTableDiv.innerHTML = `
+                    <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Yearly Breakdown</h3>
+                        <div class="h-96 overflow-y-auto">
+                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300 sticky top-0">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">Year</th>
+                                        <th scope="col" class="px-6 py-3">Contributions</th>
+                                        <th scope="col" class="px-6 py-3">Interest Earned</th>
+                                        <th scope="col" class="px-6 py-3">End Balance</th>
+                                        <th scope="col" class="px-6 py-3">Real Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${projectionData.slice(1).map(d => `
+                                        <tr class="bg-white/50 dark:bg-gray-800/50 border-b dark:border-gray-700">
+                                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">${d.year}</td>
+                                            <td class="px-6 py-4">${formatCurrency(d.yearlyContributions)}</td>
+                                            <td class="px-6 py-4">${formatCurrency(d.yearlyInterest)}</td>
+                                            <td class="px-6 py-4 font-semibold text-indigo-600 dark:text-indigo-400">${formatCurrency(d.total)}</td>
+                                            <td class="px-6 py-4 text-green-600 dark:text-green-400">${formatCurrency(d.realValue)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            };
+
+
+            // --- Event Listeners and Initial Setup ---
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => {
+                        t.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
+                        t.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-gray-200', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                    });
+                    tab.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
+                    tab.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-gray-200', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+
+                    contents.forEach(content => {
+                        content.classList.remove('active');
+                        content.style.display = 'none';
+                    });
+                    const targetContentId = tab.id.replace('tab-', '') + '-content';
+                    const targetContent = document.getElementById(targetContentId);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                        targetContent.style.display = 'block';
+                    }
+                    if (targetContentId === 'analytics-content') {
+                        updateAnalyticsTab();
+                    }
+                });
+            });
+
+            // Expense Tab Listeners
+            document.getElementById('add-expense-btn').addEventListener('click', () => {
+                const description = document.getElementById('expense-description').value;
+                const amount = parseFloat(document.getElementById('expense-amount').value);
+                const category = document.getElementById('expense-category').value;
+                if (description && amount > 0) {
+                    data.expenses.push({
+                        id: Date.now().toString(),
+                        description,
+                        amount,
+                        category,
+                        date: new Date().toISOString()
+                    });
+                    saveData();
+                    updateExpenseTab();
+                    document.getElementById('expense-description').value = '';
+                    document.getElementById('expense-amount').value = '';
+                }
+            });
+
+            document.getElementById('add-recurring-btn').addEventListener('click', () => {
+                const description = document.getElementById('recurring-description').value;
+                const amount = parseFloat(document.getElementById('recurring-amount').value);
+                const category = document.getElementById('recurring-category').value;
+                if (description && amount > 0) {
+                    data.recurringExpenses.push({
+                        id: Date.now().toString(),
+                        description,
+                        amount,
+                        category,
+                        lastAddedDate: new Date().toISOString()
+                    });
+                    saveData();
+                    updateExpenseTab();
+                    document.getElementById('recurring-description').value = '';
+                    document.getElementById('recurring-amount').value = '';
+                }
+            });
+
+            monthlySalaryInput.addEventListener('input', (e) => {
+                data.settings.monthlySalary = parseFloat(e.target.value) || 0;
+                saveData();
+                updateExpenseTab();
+            });
+            monthlyBudgetInput.addEventListener('input', (e) => {
+                data.settings.monthlyBudget = parseFloat(e.target.value) || 0;
+                saveData();
+                updateExpenseTab();
+            });
+
+            // Investment Tab Listeners
+            const lumpsumBtn = document.getElementById('lumpsum-btn');
+            const sipBtn = document.getElementById('sip-btn');
+            lumpsumBtn.addEventListener('click', () => {
+                lumpsumBtn.classList.add('bg-indigo-600', 'text-white');
+                lumpsumBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-gray-200');
+                sipBtn.classList.remove('bg-indigo-600', 'text-white');
+                sipBtn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-gray-200');
+                document.getElementById('investment-amount').placeholder = 'Amount (₹)';
+                document.getElementById('add-investment-btn').textContent = 'Add';
+                document.getElementById('cancel-edit-btn').classList.add('hidden');
+            });
+            sipBtn.addEventListener('click', () => {
+                sipBtn.classList.add('bg-indigo-600', 'text-white');
+                sipBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-gray-200');
+                lumpsumBtn.classList.remove('bg-indigo-600', 'text-white');
+                lumpsumBtn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-gray-200');
+                document.getElementById('investment-amount').placeholder = 'Monthly Amount (₹)';
+                document.getElementById('add-investment-btn').textContent = 'Add';
+                document.getElementById('cancel-edit-btn').classList.add('hidden');
+            });
+
+            document.getElementById('add-investment-btn').addEventListener('click', () => {
+                const id = document.getElementById('investment-id').value;
+                const name = document.getElementById('investment-name').value;
+                const amount = parseFloat(document.getElementById('investment-amount').value);
+                const type = document.getElementById('investment-type-select').value;
+                const investmentType = lumpsumBtn.classList.contains('bg-indigo-600') ? 'Lump Sum' : 'SIP';
+
+                if (name && amount > 0) {
+                    if (id) {
+                        const invIndex = data.investments.findIndex(inv => inv.id === id);
+                        if (invIndex !== -1) {
+                            data.investments[invIndex] = { ...data.investments[invIndex], name, amount, type: investmentType };
+                        }
+                    } else {
+                        data.investments.push({ id: Date.now().toString(), name, amount, type: investmentType });
+                    }
+                    saveData();
+                    updateInvestmentTab();
+                    document.getElementById('investment-id').value = '';
+                    document.getElementById('investment-name').value = '';
+                    document.getElementById('investment-amount').value = '';
+                    document.getElementById('investment-form-title').textContent = 'Add New Investment';
+                    document.getElementById('add-investment-btn').textContent = 'Add';
+                    document.getElementById('cancel-edit-btn').classList.add('hidden');
+                }
+            });
+
+            document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+                document.getElementById('investment-id').value = '';
+                document.getElementById('investment-name').value = '';
+                document.getElementById('investment-amount').value = '';
+                document.getElementById('investment-form-title').textContent = 'Add New Investment';
+                document.getElementById('add-investment-btn').textContent = 'Add';
+                document.getElementById('cancel-edit-btn').classList.add('hidden');
+            });
+
+            // Dark Mode
+            const updateTheme = (isDark) => {
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    moonIcon.classList.add('hidden');
+                    sunIcon.classList.remove('hidden');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    moonIcon.classList.remove('hidden');
+                    sunIcon.classList.add('hidden');
+                }
+            };
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('darkMode', isDark);
+                updateTheme(isDark);
+            });
+
+            // Initial load
+            loadData();
+            processRecurringTransactions();
+            updateExpenseTab();
+            updateInvestmentTab();
+            updateWealthTab();
+            const isDark = localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches;
+            updateTheme(isDark);
+        });
+    </script>
+</body>
+</html>
